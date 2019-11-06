@@ -6,13 +6,13 @@
 #' @param total.alpha Familywise Type I error rate (1-sided)
 #' @param accrual.yearly.rate Number of participants enrolled per year; assumed constant throughout trial
 #' @param followup.length Time from enrollment to measurement of primary outcome (only used for continuous or binary outcome types)
-#' @param population.parameters Matrix encoding scenarios (data generating distributions) used to define power constraints and  objective function
-#' @param number.choices.end.of.stage.1 
-#' @param stage.1.sample.sizes
-#' @param stage.2.sample.sizes.per.enrollment.choice
-#' @param objective.function.weights
-#' @param power.constraints
-#' @param type.of.LP.solver
+#' @param population.parameters Matrix encoding scenarios (data generating distributions) used to define power constraints and  objective function; each row defines a data generating distribution; the columns represent subpopulation 1 outcome mean and variance followed by subpopulation 2 outcome mean and variance (4 entries total).
+#' @param number.choices.end.of.stage.1 Number of enrollment choices at end of stage 1 
+#' @param stage.1.sample.sizes Vector with 2 entries representing stage 1 sample sizes for subpopulations 1 and 2, respectively
+#' @param stage.2.sample.sizes.per.enrollment.choice Matrix with number.choices.end.of.stage.1 rows and 2 columns, where the (i,j) entry represents the stage 2 sample size under enrollment choice i for subpopulation j.
+#' @param objective.function.weights Vector with length equal to number of rows of population.parameters, representing weights used to define the objective function
+#' @param power.constraints Matrix with same number of rows as population.parameters (each representing a data generating distribution) and three columns corresponding to the required power to reject (at least) H_01, H_02, H_0C, respectively.
+#' @param type.of.LP.solver "matlab", "cplex", "GLPK" The linear program solve that you want to use; assumes that you have installed this already
 #' @return 4 element list containing optimized designs from four classes (with increasing complexity):
 #' @section Designs:
 #' Each optimized design is a list containing: design.parameters and design.performance
@@ -21,8 +21,8 @@
 #' @export
 #' @examples
 #' #For demonstration purposes, the examples below use a coarse discretization.
-#' #Example 1: continuous outcome; 1 treatment arm versus control; superiority design
-#' optimized_designs <- optimize_designs(
+#' #Example 1: continuous outcome
+#' input_vector <- convert_input_step_1(
 #'   ui.n.arms=2,
 #'   ui.type.of.outcome.data="continuous",
 #'   ui.time.to.event.trial.type="",
